@@ -58,7 +58,7 @@ class Queue
         ];
 
         $amqpMessage = new AMQPMessage($data, $properties);
-        $this->channel->basic_publish($amqpMessage, $this->subject, 5672);
+        $this->channel->basic_publish($amqpMessage, $this->subject, 'key');
     }
 }
 

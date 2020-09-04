@@ -4,9 +4,7 @@ CREATE TABLE IF NOT EXISTS test_db.test_table (
     company_id           UInt32,
     product_id           UInt32,
     event_date           Date DEFAULT toDate(now())
-) ENGINE=ReplicatedMergeTree(
-         '/clickhouse/tables/{shard}/events_shard',
-         '{replica}',
+) ENGINE=MergeTree(
          event_date,
          (company_id),
          8192
@@ -20,6 +18,7 @@ CREATE TABLE IF NOT EXISTS test_db.event_queue (
     rabbitmq_host_port = 'rabbitmq:5672',
     rabbitmq_exchange_name = 'exchange_event',
     rabbitmq_format = 'JSONEachRow',
+    rabbitmq_routing_key_list='key',
     rabbitmq_num_consumers = 1;
 
 CREATE MATERIALIZED VIEW test_db.consumer  TO test_db.test_table
