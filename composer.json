@@ -1,0 +1,12 @@
+{
+  "name": "demo/stand",
+  "type": "project",
+  "description": "Demo rabbitmq + json + clickhouse cluster + zookeeper",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "php": "^7.4",
+    "ext-json": "*",
+    "php-amqplib/php-amqplib": "^2.12"
+  }
+}

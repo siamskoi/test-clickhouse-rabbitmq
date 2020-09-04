@@ -1,0 +1,51 @@
+version: '3'
+services:
+  php:
+    build:
+      dockerfile: Dockerfile
+      context: ./
+    volumes:
+      - ./test.php:/var/www/test.php
+    working_dir: /var/www
+
+  rabbitmq:
+    image: library/rabbitmq:management
+    ports:
+      - 15672:15672
+  zookeeper:
+    image: zookeeper
+    ports:
+      - 2181:2181
+
+  clickhouse1:
+    image: yandex/clickhouse-server
+    ports:
+      - 8811:8123
+      - 9011:9000
+    environment:
+      CLICKHOUSE_DB: test_db
+    volumes:
+      - ./configs/clickhouse1/config.xml:/etc/clickhouse-server/config.xml
+      - ./configs/clickhouse_replication_config.xml:/etc/clickhouse-server/clickhouse_replication_config.xml
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+      - ./rabbitmq_json.sql:/rabbitmq_json.sql
+    depends_on:
+      - zookeeper
+      - rabbitmq
+
+  clickhouse2:
+    image: yandex/clickhouse-server
+    ports:
+      - 8812:8123
+      - 9012:9000
+    environment:
+      CLICKHOUSE_DB: test_db
+    volumes:
+      - ./configs/clickhouse1/config.xml:/etc/clickhouse-server/config.xml
+      - ./configs/clickhouse_replication_config.xml:/etc/clickhouse-server/clickhouse_replication_config.xml
+#      - ./rabbitmq_json.sql:/docker-entrypoint-initdb.d/rabbitmq_json.sql
+    depends_on:
+      - zookeeper
+      - rabbitmq
+
+
